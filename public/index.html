@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin Wheel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Spin Wheel</h1>
+
+        <!-- User Form -->
+        <form id="userForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter your username" required>
+            <button type="button" onclick="joinUser()">Join</button>
+        </form>
+
+        <!-- Profile Section -->
+        <div id="profileSection" style="display: none;">
+            <form id="inputForm">
+				<label for="profileName">Profile Name:</label>
+				<input type="text" id="profileName" placeholder="Enter profile name" required>
+
+				<label for="numParticipants">Number of Participants (2-15):</label>
+				<input type="number" id="numParticipants" name="numParticipants" min="2" max="15" required>
+				<button type="button" onclick="generateInputs()">Generate Inputs</button>
+				<div id="participantsInputs"></div>
+				<button type="button" id="createWheelButton" onclick="createWheel()">Create Wheel</button>
+				<button type="button" onclick="saveProfile()">Save Profile</button>
+			</form>
+
+
+            <h3>Saved Profiles</h3>
+            <ul id="profileList"></ul>
+        </div>
+
+        <!-- Spin Wheel Section -->
+        <div class="wheel-container">
+            <canvas id="wheelCanvas" width="500" height="500"></canvas>
+            <div class="arrow"></div>
+            <button id="spinButton" onclick="spinWheel()">Spin</button>
+        </div>
+        <p id="result"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
