@@ -65,6 +65,41 @@ app.post('/create-profile', (req, res) => {
         });
 });
 
+// Handle profile sharing
+app.post('/share-profile', (req, res) => {
+    const { profileId, targetUsername } = req.body;
+
+    // Check if the target user exists
+    db.get(`SELECT id FROM users WHERE username = ?`, [targetUsername], (err, targetUser) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (!targetUser) {
+            return res.status(400).json({ message: 'Target user does not exist.' });
+        }
+
+        // Duplicate the profile for the target user
+        db.get(`SELECT * FROM profiles WHERE id = ?`, [profileId], (err, profile) => {
+            if (err || !profile) {
+                return res.status(500).json({ error: 'Profile not found.' });
+            }
+
+            db.run(`
+                INSERT INTO profiles (user_id, profile_name, choices, probabilities)
+                VALUES (?, ?, ?, ?)`,
+                [targetUser.id, profile.profile_name, profile.choices, profile.probabilities],
+                function(err) {
+                    if (err) {
+                        return res.status(500).json({ error: err.message });
+                    }
+                    res.json({ message: `Profile shared with ${targetUsername} successfully.` });
+                }
+            );
+        });
+    });
+});
+
+
 app.get('/profiles/:userId', (req, res) => {
     const userId = req.params.userId;
     db.all(`SELECT * FROM profiles WHERE user_id = ?`, [userId], (err, rows) => {

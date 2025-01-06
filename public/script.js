@@ -1,4 +1,5 @@
 let userId = null;
+let selectedProfileId = null;
 
 // Store participants, colors, and wheel segments
 let participants = [];
@@ -51,6 +52,30 @@ function generateInputs() {
     }
 }
 
+// prompt for profile sharing
+async function promptShareProfile(profileId) {
+    const targetUsername = prompt('Enter the username of the person to share this profile with:');
+    if (!targetUsername) {
+        alert('Sharing canceled.');
+        return;
+    }
+
+    const response = await fetch('http://localhost:3000/share-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profileId, targetUsername }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+        alert(result.message);
+    } else {
+        alert(`Failed to share profile: ${result.message}`);
+    }
+}
+
+
 // Save profile
 async function saveProfile() {
     const profileName = document.getElementById('profileName').value;
@@ -74,23 +99,6 @@ async function saveProfile() {
     document.getElementById('inputForm').style.display = 'block';
 }
 
-
-// Load profiles
-async function loadProfiles() {
-    const response = await fetch(`http://localhost:3000/profiles/${userId}`);
-    const profiles = await response.json();
-
-    const profileList = document.getElementById('profileList');
-    profileList.innerHTML = '';
-
-    profiles.forEach(profile => {
-        const li = document.createElement('li');
-        li.innerText = profile.profile_name;
-        li.onclick = () => loadProfile(profile);
-        profileList.appendChild(li);
-    });
-}
-
 // Load a specific profile
 function loadProfile(profile) {
     document.getElementById('profileName').value = profile.profile_name;
@@ -109,6 +117,102 @@ function loadProfile(profile) {
     // Ensure the "Create Wheel" button is visible
     document.getElementById('createWheelButton').style.display = 'inline-block';
 }
+
+
+// Update to support profile sharing (No profile sharing)
+/* 
+async function loadProfiles() {
+     const response = await fetch(`http://localhost:3000/profiles/${userId}`);
+    const profiles = await response.json();
+
+    const profileList = document.getElementById('profileList');
+    profileList.innerHTML = '';
+    selectedProfileId = null;
+
+    profiles.forEach(profile => {
+        const li = document.createElement('li');
+        li.innerText = profile.profile_name;
+        li.style.cursor = 'pointer';
+
+        li.onclick = () => {
+            document.querySelectorAll('#profileList li').forEach(item => item.classList.remove('selected'));
+            li.classList.add('selected');
+            selectedProfileId = profile.id;
+
+            // Show the Load Profile button
+            document.getElementById('loadProfileButton').style.display = 'inline-block';
+        };
+
+        profileList.appendChild(li);
+    });
+}
+*/
+
+// Update to support profile sharing
+async function loadProfiles() {
+    const response = await fetch(`http://localhost:3000/profiles/${userId}`);
+    const profiles = await response.json();
+
+    const profileList = document.getElementById('profileList');
+    profileList.innerHTML = '';
+    selectedProfileId = null;
+
+    profiles.forEach(profile => {
+        const li = document.createElement('li');
+        li.innerText = profile.profile_name;
+        li.style.cursor = 'pointer';
+
+        // Add onclick handler for selecting a profile
+        li.onclick = () => {
+            document.querySelectorAll('#profileList li').forEach(item => item.classList.remove('selected'));
+            li.classList.add('selected');
+            selectedProfileId = profile.id;
+
+            // Show the Load Profile button
+            document.getElementById('loadProfileButton').style.display = 'inline-block';
+        };
+
+        // Create the Share button
+        const shareButton = document.createElement('button');
+        shareButton.innerText = 'Share';
+        shareButton.style.marginLeft = '10px';
+        shareButton.onclick = (e) => {
+            e.stopPropagation(); // Prevent profile selection when clicking "Share"
+            promptShareProfile(profile.id);
+        };
+
+        li.appendChild(shareButton);
+        profileList.appendChild(li);
+    });
+}
+
+
+
+async function loadSelectedProfile() {
+    if (!selectedProfileId) {
+        alert('Please select a profile to load.');
+        return;
+    }
+
+    const response = await fetch(`http://localhost:3000/profiles/${userId}`);
+    const profiles = await response.json();
+
+    // Find the selected profile
+    const profile = profiles.find(p => p.id === selectedProfileId);
+
+    if (profile) {
+        loadProfile(profile);
+
+        // Hide the "Load Profile" button after loading
+        document.getElementById('loadProfileButton').style.display = 'none';
+    } else {
+        alert('Failed to load profile. Please try again.');
+    }
+}
+
+
+
+
 
 function validateInputs() {
     let totalProbability = 0;

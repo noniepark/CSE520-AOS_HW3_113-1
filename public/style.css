@@ -57,3 +57,17 @@ button {
     left: 50%;
     transform: translateX(-50%) rotate(0deg); /* Rotate 0 degrees to point downwards */
 }
+
+#profileList li {
+    padding: 5px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#profileList li.selected {
+    background-color: #f0f0f0;
+    border-color: #007bff;
+    color: #007bff;
+    font-weight: bold;
+}
