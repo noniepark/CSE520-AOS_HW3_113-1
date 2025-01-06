@@ -52,26 +52,6 @@ function generateInputs() {
 }
 
 // Save profile
-/*
-async function saveProfile() {
-    const profileName = document.getElementById('profileName').value;
-    const choices = participants.map(p => p.nameInput.value);
-    const probabilities = participants.map(p => p.probabilityInput.value);
-
-    const response = await fetch('http://localhost:3000/create-profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, profileName, choices, probabilities }),
-    });
-
-    if (response.ok) {
-        alert('Profile saved successfully!');
-        loadProfiles();
-    } else {
-        alert('Error saving profile.');
-    }
-}
-*/
 async function saveProfile() {
     const profileName = document.getElementById('profileName').value;
     const choices = participants.map(p => p.nameInput.value);
@@ -112,22 +92,6 @@ async function loadProfiles() {
 }
 
 // Load a specific profile
-/*
-function loadProfile(profile) {
-    document.getElementById('profileName').value = profile.profile_name;
-
-    const choices = JSON.parse(profile.choices);
-    const probabilities = JSON.parse(profile.probabilities);
-
-    document.getElementById('numParticipants').value = choices.length;
-    generateInputs();
-
-    choices.forEach((choice, index) => {
-        participants[index].nameInput.value = choice;
-        participants[index].probabilityInput.value = probabilities[index];
-    });
-}
-*/
 function loadProfile(profile) {
     document.getElementById('profileName').value = profile.profile_name;
 
@@ -164,48 +128,6 @@ function validateInputs() {
 }
 
 // Original createWheel function
-/*
-function createWheel() {
-    if (!validateInputs()) {
-        return;
-    }
-
-    const wheelCanvas = document.getElementById('wheelCanvas');
-    const ctx = wheelCanvas.getContext('2d');
-    let startAngle = 0;
-
-    ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
-    wheelSegments = [];
-
-    participants.forEach((participant, index) => {
-        const probability = parseInt(participant.probabilityInput.value);
-        const sliceAngle = (probability / 100) * 2 * Math.PI;
-        const endAngle = startAngle + sliceAngle;
-
-        // Save the angle range and participant for later use
-        wheelSegments.push({ startAngle, endAngle, participant });
-
-        ctx.beginPath();
-        ctx.moveTo(wheelCanvas.width / 2, wheelCanvas.height / 2);
-        ctx.arc(wheelCanvas.width / 2, wheelCanvas.height / 2, wheelCanvas.width / 2, startAngle, endAngle);
-        ctx.closePath();
-        ctx.fillStyle = colors[index];
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.save();
-        ctx.translate(wheelCanvas.width / 2, wheelCanvas.height / 2);
-        ctx.rotate(startAngle + sliceAngle / 2);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = '#000';
-        ctx.font = '20px Arial';
-        ctx.fillText(participant.nameInput.value, wheelCanvas.width / 2 - 20, 10);
-        ctx.restore();
-
-        startAngle = endAngle;
-    });
-}
-*/
 function createWheel() {
     if (!validateInputs()) {
         return;
@@ -245,7 +167,7 @@ function createWheel() {
         startAngle = endAngle;
     });
 
-    alert('Wheel created! You can now spin it.');
+    //alert('Wheel created! You can now spin it.');
 }
 
 
@@ -326,5 +248,3 @@ function spinWheel() {
 
     rotateWheel();
 }
-
-// Remaining functions (createWheel, spinWheel) remain unchanged
